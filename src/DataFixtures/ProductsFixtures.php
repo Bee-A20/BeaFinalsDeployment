@@ -56,15 +56,25 @@ class ProductsFixtures extends Fixture
         ];
 
         foreach ($products as $item) {
-            $product = new Products();
-            $product->setName($item['name']);
-            $product->setPrice($item['price']);
-            $product->setDescription($item['description']);
-            $product->setStock($item['stock']);
-            $product->setImage($item['image']);
-            $manager->persist($product);
+            $this->createProduct($manager, $item);
         }
 
         $manager->flush();
+    }
+
+    private function createProduct(ObjectManager $manager, array $item): void
+    {
+        $repository = $manager->getRepository(Products::class);
+        if ($repository->findOneBy(['name' => $item['name']])) {
+            return;
+        }
+
+        $product = new Products();
+        $product->setName($item['name']);
+        $product->setPrice($item['price']);
+        $product->setDescription($item['description']);
+        $product->setStock($item['stock']);
+        $product->setImage($item['image']);
+        $manager->persist($product);
     }
 }

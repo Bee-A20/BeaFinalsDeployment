@@ -18,38 +18,29 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $admin = new User();
-        $admin->setUsername('admin');
-        $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setEmail('biangss1220@gmail.com');
-        $admin->setIsVerified(true);
-        $admin->setVerificationToken('');
-        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin123');
-        $admin->setPassword($hashedPassword);
-        $manager->persist($admin);
-
-        $user = new User();
-        $user->setUsername('bealyn');
-        $user->setEmail('bealynpacunla93@gmail.com');
-        $user->setIsVerified(true);
-        $user->setVerificationToken('');
-        // $user->setIsActive(true);
-        $user->setRoles(['ROLE_USER']);
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'user123');
-        $user->setPassword($hashedPassword);
-        $manager->persist($user);
-
-        $staff = new User();
-        $staff->setUsername('staff');
-        // $staff->setIsActive(true);
-        $staff->setRoles(['ROLE_STAFF']);
-        $staff->setEmail('lynziepacunla@gmail.com');
-        $staff->setIsVerified(true);
-        $staff->setVerificationToken('');
-        $hashedPassword = $this->passwordHasher->hashPassword($staff, 'staff123');
-        $staff->setPassword($hashedPassword);
-        $manager->persist($staff);
+        $this->createUser($manager, 'admin', 'biangss1220@gmail.com', ['ROLE_ADMIN'], 'admin123');
+        $this->createUser($manager, 'bealyn', 'bealynpacunla93@gmail.com', ['ROLE_USER'], 'user123');
+        $this->createUser($manager, 'staff', 'lynziepacunla@gmail.com', ['ROLE_STAFF'], 'staff123');
 
         $manager->flush();
+    }
+
+    private function createUser(ObjectManager $manager, string $username, string $email, array $roles, string $password): void
+    {
+        $repository = $manager->getRepository(User::class);
+        $existing = $repository->findOneBy(['email' => $email]) ?? $repository->findOneBy(['username' => $username]);
+        if ($existing) {
+            return;
+        }
+
+        $user = new User();
+        $user->setUsername($username);
+        $user->setRoles($roles);
+        $user->setEmail($email);
+        $user->setIsVerified(true);
+        $user->setVerificationToken('');
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
+        $user->setPassword($hashedPassword);
+        $manager->persist($user);
     }
 }
