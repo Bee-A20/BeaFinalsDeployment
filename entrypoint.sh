@@ -22,7 +22,7 @@ if [ ! -f config/jwt/private.pem ]; then
 fi
 
 echo "Running migrations..."
-php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
 
 echo "Loading fixtures..."
 php bin/console doctrine:fixtures:load --append --no-interaction || true
