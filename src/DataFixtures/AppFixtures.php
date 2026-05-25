@@ -9,9 +9,7 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
-
-        $manager->flush();
+        // Main application fixtures class.
+        // Product data is now loaded from ProductsFixtures.
     }
 }
